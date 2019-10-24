@@ -1,0 +1,13 @@
+onclogy como un mismo tipo
+tipo de negocio 
+offering= soluciones que brinda IBM al público 
+gross profit**
+warning de datos incongruentes y/o sus detonantes 
+en el costo son datos random 
+las columnas en amarillo no son reales 
+maj & min son activos y pasivos; segmentar estos 
+costo 400, gasto 800
+columna AD es como el "resultado" ya que es donde se muestra la segmentación utilizada
+tratar de reducir "unsegmented" 
+
+
