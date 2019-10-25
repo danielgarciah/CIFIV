@@ -13,8 +13,9 @@ data = pd.read_excel("../Data/M9 M2 AIW segmentation September WD4 - Oscar.xlsx"
 
 #%% Quitar columnas vacías
 data=data.iloc[:,:30]
-data=data.drop(["Year","Segment","Quarter","Month"],axis=1)
-#data.drop(data.iloc[:, 30:], inplace = True, axis = 1)
+data=data.drop(["Year","Segment","Quarter","Month","ORDERNUM","Major_Minor","Iot_Name","Imt_Name","OCC","FAMILY","Ctrynum"],axis=1)
+#Se eliminan las columnas de Year, Segment, Quarter, Month, ORDERNUM, Major_Minor, Iot_Name, Imt_Name 
+#debido a que para el análisis no son necesarios.
 
 #%% REPORTE DE CALIDAD DE LOS DATOS
 def DQR(data):
@@ -61,10 +62,13 @@ data_quality_report = DQR(data)
 
 #%% Usar Customer_number como índice
 #data.index=data.Customer_number
-#data=data.set_index("Customer_number")
-data.rename_axis("Customer_number",axis="index", inplace=True)
+data=data.set_index("Customer_number")
+#data.rename_axis("Customer_number",axis="index", inplace=True)
 
-
+#%%
+#resul_ctry=data.groupby(["Country"])["Segmentation Offering"].sum()
+#resul_ctry1=data.groupby(["Segmentation Offering"])["Country"].sum()
+#num_sementatio=pd.value_counts(data["Segmentation Offering"])
 
 
 
