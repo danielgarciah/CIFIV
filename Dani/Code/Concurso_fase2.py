@@ -7,13 +7,18 @@ Created on Wed Oct 23 19:28:37 2019
 
 import numpy as np
 import pandas as pd
+import scipy.spatial.distance as sc
+from scipy.cluster import hierarchy
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
 
 #%% Importar los datos
 data = pd.read_excel("../Data/M9 M2 AIW segmentation September WD4 - Oscar.xlsx",sheetname="Raw data 8XX")#,index_col="Customer_number")
 
 #%% Quitar columnas vacías
 data=data.iloc[:,:30]
-data=data.drop(["Year","Segment","Quarter","Month","ORDERNUM","Major_Minor","Iot_Name","Imt_Name","OCC","FAMILY","Ctrynum"],axis=1)
+data=data.drop(["Year","Segment","Quarter","Month","ORDERNUM","Major_Minor","Iot_Name","Imt_Name","OCC","FAMILY","Country","Cost","SRC"],axis=1)
 #Se eliminan las columnas de Year, Segment, Quarter, Month, ORDERNUM, Major_Minor, Iot_Name, Imt_Name 
 #debido a que para el análisis no son necesarios.
 
@@ -65,10 +70,54 @@ data_quality_report = DQR(data)
 data=data.set_index("Customer_number")
 #data.rename_axis("Customer_number",axis="index", inplace=True)
 
+#%%Separando columna de resultados
+resultados = data['Segmentation Offering']
+data = data.iloc[:,:-1]
+
+#%% Analizando los resultados
+num_sementation=pd.value_counts(resultados)
+
+#%%Funcion de normalizacion
+def normalizar(x):
+    return (x-x.mean())/x.std()
+#%%Normalizando
+#data['Ctrynum']=normalizar(data['Ctrynum'])
+data['Maj']=normalizar(data['Maj'])
+data['Minor']=normalizar(data['Minor'])
+
+#%%Categorizando 
+def categorizar(X):
+    val_unic = np.array(X.unique())
+    w = np.round(np.linspace(0,1,len(X.unique())),3)
+    directorio = dict(zip(val_unic,w))
+    return [directorio[item] for item in X]
+#%%Aplicando formula
+data['Work__'] = categorizar(data['Work__'])
+data["OCC_Desc"] = categorizar(data["OCC_Desc"])    
+data["PRODID"] = categorizar(data["PRODID"])
+data["LDIV"] = categorizar(data["LDIV"])
+data["LoB"] = categorizar(data["LoB"]) 
+data["Pillar"] = categorizar(data["Pillar"]) 
+data["Bmdiv"] = categorizar(data["Bmdiv"]) 
+data["SegCalc"] = categorizar(data["SegCalc"])
+data["Cust__"] = categorizar(data["Cust__"])
+data["Leru"] = categorizar(data["Leru"])
+
 #%%
-#resul_ctry=data.groupby(["Country"])["Segmentation Offering"].sum()
-#resul_ctry1=data.groupby(["Segmentation Offering"])["Country"].sum()
-num_sementatio=pd.value_counts(data["Segmentation Offering"])
+reporte = DQR(data)
+
+#%%
+data_parametros = pd.read_excel("../Data/M9 M2 AIW segmentation September WD4 - Oscar.xlsx",sheetname="Raw data 8XX")
+
+#%%
+data_parametros=data_parametros.iloc[:,:29]
+data_parametros=data_parametros.drop(["Year","Segment","Quarter","Month","ORDERNUM","Maj","Minor","Iot_Name","Imt_Name","Country","Cost","SRC","LoB","Bmdiv","Ctrynum"],axis=1)
+data_parametros=data_parametros.set_index("Customer_number")
+#%%
+reporte_parametros=DQR(data_parametros)
+
+#%%
+
 
 
 
